@@ -34,6 +34,9 @@ AMagePawn::AMagePawn(const FObjectInitializer &ObjInitializer)
 	TrailParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("TrailParticle"));
 	TrailParticle->SetupAttachment(StaffMesh);
 
+	CircleSpellParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("CircleSpellParticle"));
+	CircleSpellParticle->SetupAttachment(StaffMesh);
+
 	ShallNotPassParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShallNotPassParticle"));
 	ShallNotPassParticle->SetupAttachment(StaffMesh);
 	ShallNotPassParticle->bAutoActivate = false;

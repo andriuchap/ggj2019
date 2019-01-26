@@ -33,6 +33,9 @@ public:
 	class UParticleSystemComponent* TrailParticle;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mage")
+	UParticleSystemComponent* CircleSpellParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mage")
 	UParticleSystemComponent* ShallNotPassParticle;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mage")

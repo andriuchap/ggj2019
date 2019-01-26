@@ -23,11 +23,12 @@ AMagicMissile::AMagicMissile(const FObjectInitializer &ObjInitializer)
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
+	MovementComponent->bIsHomingProjectile = true;
+	MovementComponent->HomingAccelerationMagnitude = 1000.0F;
 }
 
 // Called when the game starts or when spawned
 void AMagicMissile::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereCollision->IgnoreActorWhenMoving(GetOwner(), true);
 }
