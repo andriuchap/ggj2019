@@ -2,11 +2,11 @@
 
 #include "SpellDetector.h"
 
-bool FSpellDetector::DetectCircle(const TArray<FVector> &Positions, float AcceptanceThreshold, float RadiusVariation, FVector &OutAverageLoc, float &IsCircle)
+bool FSpellDetector::DetectCircle(const TArray<FVector> &Positions, float AcceptanceThreshold, float RadiusVariation, FVector &OutAverageLoc, float &CircleRadius)
 {
 	FVector AverageLocation = FVector::ZeroVector;
 	float AverageDistance = 0.0F;
-	IsCircle = 0.0F;
+	float IsCircle = 0.0F;
 
 	if (Positions.Num() != 0)
 	{
@@ -28,6 +28,8 @@ bool FSpellDetector::DetectCircle(const TArray<FVector> &Positions, float Accept
 			AverageDistance += Distance;
 		}
 		AverageDistance /= Positions.Num();
+
+		CircleRadius = AverageDistance;
 
 		// We have a minimum radius of a circle set
 		if (AverageDistance >= 15.0F)

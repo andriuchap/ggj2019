@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spell Cast")
 	TSubclassOf<class AMagicMissile> MissileClass;
 
+	UPROPERTY(EditAnywhere, Category = "Spell Cast")
+	float MagicMissileSpeedMultiplier;
+
 protected:
 
 	virtual void CastSpell(AMagePawn* Mage, const FHitResult &HitResult) override;

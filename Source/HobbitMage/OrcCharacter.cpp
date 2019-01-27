@@ -38,17 +38,20 @@ void AOrcCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 void AOrcCharacter::MoveToPlayer()
 {
-	AAIController* Controller = Cast<AAIController>(GetController());
-	if (Controller)
+	if (bWalkToTarget)
 	{
-		APlayerController* PC = GetWorld()->GetFirstPlayerController();
-		if (PC)
+		AAIController* Controller = Cast<AAIController>(GetController());
+		if (Controller)
 		{
-			AMagePawn* Pawn = Cast<AMagePawn>(PC->GetPawn());
-			if (Pawn)
+			APlayerController* PC = GetWorld()->GetFirstPlayerController();
+			if (PC)
 			{
-				Controller->SetFocus(Pawn);
-				Controller->MoveToLocation(Pawn->PlayerCamera->GetComponentLocation(), 50.0F);
+				AMagePawn* Pawn = Cast<AMagePawn>(PC->GetPawn());
+				if (Pawn)
+				{
+					Controller->SetFocus(Pawn);
+					Controller->MoveToLocation(Pawn->PlayerCamera->GetComponentLocation(), 50.0F);
+				}
 			}
 		}
 	}

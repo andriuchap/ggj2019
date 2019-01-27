@@ -10,7 +10,7 @@
 
 AFireSpellCast::AFireSpellCast(const FObjectInitializer &ObjInitializer) : Super(ObjInitializer)
 {
-
+	MagicMissileSpeedMultiplier = 40.0F;
 }
 
 void AFireSpellCast::CastSpell(AMagePawn* Mage, const FHitResult &HitResult)
@@ -25,6 +25,7 @@ void AFireSpellCast::CastSpell(AMagePawn* Mage, const FHitResult &HitResult)
 			{
 				FVector StaffVelDir = StaffVelocity;
 				StaffVelDir.Normalize();
+				FVector MagicMissileDirection = StaffVelDir;
 				FTransform SpawnTransform;
 				SpawnTransform.SetLocation(GetActorLocation());
 				SpawnTransform.SetRotation(StaffVelDir.ToOrientationQuat());
@@ -42,13 +43,15 @@ void AFireSpellCast::CastSpell(AMagePawn* Mage, const FHitResult &HitResult)
 						FVector DirToOrc = Orc->GetActorLocation() - GetActorLocation();
 						DirToOrc.Normalize();
 						float DotProduct = FVector::DotProduct(DirToOrc, StaffVelDir);
-						if (DotProduct > 0.866F && DotProduct < MinProduct)
+						if (DotProduct > 0.707F && DotProduct < MinProduct)
 						{
 							MinProduct = DotProduct;
 							BestFitOrc = Orc;
+							MagicMissileDirection = StaffVelDir + DirToOrc;
 						}
 					}
-					Missile->MovementComponent->Velocity = StaffVelocity * 50.0F;
+					MagicMissileDirection.Normalize();
+					Missile->MovementComponent->Velocity = MagicMissileDirection * StaffVelocity.Size() * MagicMissileSpeedMultiplier;
 					if (BestFitOrc)
 					{
 						Missile->MovementComponent->HomingTargetComponent = BestFitOrc->GetRootComponent();

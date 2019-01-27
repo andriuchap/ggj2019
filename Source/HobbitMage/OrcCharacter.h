@@ -15,6 +15,11 @@ public:
 	// Sets default values for this character's properties
 	AOrcCharacter(const FObjectInitializer &ObjInitializer);
 
+public:
+
+	UPROPERTY(EditAnywhere, Category = "Orc")
+	bool bWalkToTarget;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

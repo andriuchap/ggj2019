@@ -90,13 +90,19 @@ void AMagePawn::RegisterPoint()
 	if (World)
 	{
 		FVector Position;
-		if (FSpellDetector::DetectCircle(BufferedPositions, CircleAcceptanceChance, RadiusVariation, Position, CircleChance))
+		float CircleRadius = 0.0F;
+		if (FSpellDetector::DetectCircle(BufferedPositions, CircleAcceptanceChance, RadiusVariation, Position, CircleRadius))
 		{
 			UnreadySpellCast();
 			World->GetTimerManager().SetTimer(TimerHandle_SpellCastCooldown, this, &AMagePawn::SpellCastReady, SpellCastCooldown);
 			FTransform SpawnTransform;
 			SpawnTransform.SetLocation(Position);
-			World->SpawnActor<ASpellCast>(CircleSpellCastClass, SpawnTransform);
+			SpawnTransform.SetRotation(PlayerCamera->GetComponentQuat());
+			ASpellCast* Cast = World->SpawnActor<ASpellCast>(CircleSpellCastClass, SpawnTransform);
+			if (Cast)
+			{
+				Cast->SpellCastParticles->SetFloatParameter("CircleRadius", CircleRadius);
+			}
 		}
 		else if (FSpellDetector::DetectShallNotPass(BufferedPositions, PlayerCamera->GetComponentLocation(), 65.0F))
 		{

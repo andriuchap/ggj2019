@@ -5,6 +5,10 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "OrcCharacter.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMagicMissile::AMagicMissile(const FObjectInitializer &ObjInitializer)
@@ -25,10 +29,35 @@ AMagicMissile::AMagicMissile(const FObjectInitializer &ObjInitializer)
 	MovementComponent->UpdatedComponent = RootComponent;
 	MovementComponent->bIsHomingProjectile = true;
 	MovementComponent->HomingAccelerationMagnitude = 1000.0F;
+
+	InitialLifeSpan = 4.0F;
 }
 
 // Called when the game starts or when spawned
 void AMagicMissile::BeginPlay()
 {
 	Super::BeginPlay();
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMagicMissile::BeginSphereOverlap);
+}
+
+void AMagicMissile::BeginSphereOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	AOrcCharacter* Orc = Cast<AOrcCharacter>(OtherActor);
+	if (Orc)
+	{
+		// Spawn Explosion and Sound
+		if (ExplosionParticle)
+		{
+			FTransform ParticleTransform;
+			ParticleTransform.SetLocation(GetRootComponent()->GetComponentLocation());
+			ParticleTransform.SetRotation(GetRootComponent()->GetComponentQuat());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, ParticleTransform);
+		}
+		if (ExplosionSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetRootComponent()->GetComponentLocation());
+		}
+		// Deal damage
+		Destroy();
+	}
 }
