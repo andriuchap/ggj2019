@@ -16,7 +16,8 @@ AMagicMissile::AMagicMissile(const FObjectInitializer &ObjInitializer)
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	RootComponent = SphereCollision;
 	SphereCollision->SetCollisionProfileName("OverlapAllDynamic");
-	SphereCollision->SetGenerateOverlapEvents(true);
+	//SphereCollision->SetGenerateOverlapEvents(true);
+	SphereCollision->SetNotifyRigidBodyCollision(true);
 
 	MissileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MissileMesh"));
 	MissileMesh->SetupAttachment(RootComponent);
@@ -37,7 +38,8 @@ AMagicMissile::AMagicMissile(const FObjectInitializer &ObjInitializer)
 void AMagicMissile::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMagicMissile::BeginSphereOverlap);
+	//SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AMagicMissile::BeginSphereOverlap);
+	SphereCollision->OnComponentHit.AddDynamic(this, &AMagicMissile::SphereHit);
 }
 
 void AMagicMissile::BeginSphereOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -58,7 +60,30 @@ void AMagicMissile::BeginSphereOverlap(UPrimitiveComponent * OverlappedComponent
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetRootComponent()->GetComponentLocation());
 		}
 		// Deal damage
+		Orc->KillOrc();
 		Destroy();
+	}
+}
+
+void AMagicMissile::SphereHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	AOrcCharacter* Orc = Cast<AOrcCharacter>(OtherActor);
+	if (Orc)
+	{
+		// Deal damage
 		Orc->KillOrc();
 	}
+	// Spawn Explosion and Sound
+	if (ExplosionParticle)
+	{
+		FTransform ParticleTransform;
+		ParticleTransform.SetLocation(GetRootComponent()->GetComponentLocation());
+		ParticleTransform.SetRotation(GetRootComponent()->GetComponentQuat());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, ParticleTransform);
+	}
+	if (ExplosionSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetRootComponent()->GetComponentLocation());
+	}
+	Destroy();
 }

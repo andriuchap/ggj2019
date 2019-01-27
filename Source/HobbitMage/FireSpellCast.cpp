@@ -7,6 +7,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "EngineUtils.h"
 #include "OrcCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 AFireSpellCast::AFireSpellCast(const FObjectInitializer &ObjInitializer) : Super(ObjInitializer)
 {
@@ -33,6 +34,7 @@ void AFireSpellCast::CastSpell(AMagePawn* Mage, const FHitResult &HitResult)
 				SpawnParams.Owner = Mage;
 				SpawnParams.Instigator = Mage;
 				AMagicMissile* Missile = World->SpawnActor<AMagicMissile>(MissileClass, SpawnTransform, SpawnParams);
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), CastSound, GetActorLocation());
 				if (Missile)
 				{
 					float MinProduct = 9999.0F;

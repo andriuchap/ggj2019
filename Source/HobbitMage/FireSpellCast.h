@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spell Cast")
 	float MagicMissileSpeedMultiplier;
 
+	UPROPERTY(EditAnywhere, Category = "Spell Cast")
+	class USoundBase* CastSound;
+
 protected:
 
 	virtual void CastSpell(AMagePawn* Mage, const FHitResult &HitResult) override;

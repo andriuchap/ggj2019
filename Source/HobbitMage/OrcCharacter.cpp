@@ -8,12 +8,15 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "HobbitMageGameModeBase.h"
 
 // Sets default values
 AOrcCharacter::AOrcCharacter(const FObjectInitializer &ObjInitializer)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCapsuleComponent()->SetNotifyRigidBodyCollision(true);
 
 }
 
@@ -63,6 +66,11 @@ void AOrcCharacter::KillOrc()
 {
 	GetCharacterMovement()->Deactivate();
 	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	AHobbitMageGameModeBase* GameMode = Cast<AHobbitMageGameModeBase>(GetWorld()->GetAuthGameMode());
+	if (GameMode)
+	{
+		GameMode->AddScore(10);
+	}
 	OnOrcKilled();
 }
 

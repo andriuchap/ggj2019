@@ -11,6 +11,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "SpellCast.h"
 #include "Components/AudioComponent.h"
+#include "HobbitMageGameModeBase.h"
 
 // Sets default values
 AMagePawn::AMagePawn(const FObjectInitializer &ObjInitializer)
@@ -27,6 +28,7 @@ AMagePawn::AMagePawn(const FObjectInitializer &ObjInitializer)
 
 	StaffMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaffMesh"));
 	StaffMesh->SetupAttachment(StaffController);
+	StaffMesh->SetCollisionProfileName("Staff");
 	
 	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
 	PlayerCamera->SetupAttachment(RootComponent);
@@ -104,12 +106,19 @@ void AMagePawn::RegisterPoint()
 				Cast->SpellCastParticles->SetFloatParameter("CircleRadius", CircleRadius);
 			}
 		}
-		else if (FSpellDetector::DetectShallNotPass(BufferedPositions, PlayerCamera->GetComponentLocation(), 65.0F))
+		else
 		{
-			UnreadySpellCast();
-			ShallNotPassParticle->Activate();
-			bCastingShallNotPass = true;
-			YouShallNot->Play();
+			AHobbitMageGameModeBase* GameMode = Cast<AHobbitMageGameModeBase>(GetWorld()->GetAuthGameMode());
+			if (GameMode)
+			{
+				if (FSpellDetector::DetectShallNotPass(BufferedPositions, PlayerCamera->GetComponentLocation(), 86.0F) && !GameMode->bShallNotPassUsed)
+				{
+					UnreadySpellCast();
+					ShallNotPassParticle->Activate();
+					bCastingShallNotPass = true;
+					YouShallNot->Play();
+				}
+			}
 		}
 	}
 }
