@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "MagePawn.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AOrcCharacter::AOrcCharacter(const FObjectInitializer &ObjInitializer)
@@ -55,5 +57,12 @@ void AOrcCharacter::MoveToPlayer()
 			}
 		}
 	}
+}
+
+void AOrcCharacter::KillOrc()
+{
+	GetCharacterMovement()->Deactivate();
+	GetCapsuleComponent()->SetCollisionProfileName("NoCollision");
+	OnOrcKilled();
 }
 

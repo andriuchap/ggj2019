@@ -59,5 +59,6 @@ void AMagicMissile::BeginSphereOverlap(UPrimitiveComponent * OverlappedComponent
 		}
 		// Deal damage
 		Destroy();
+		Orc->KillOrc();
 	}
 }
